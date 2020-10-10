@@ -1,0 +1,15 @@
+module.exports = (sequelize, type) => sequelize.define('layout', {
+    id: {
+      type: type.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+      allowNull: false,
+    },
+    access_id: type.STRING, // ids who had access to model
+    assigned_by: type.INTEGER,
+    object_id: type.INTEGER,
+    name: type.INTEGER,
+    square: type.INTEGER,
+    image: type.STRING,
+    place_number: type.INTEGER,
+  });

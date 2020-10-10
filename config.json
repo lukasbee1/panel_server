@@ -1,0 +1,20 @@
+  
+{
+    "development": {
+      "username": "maksim",
+      "password": "pass",
+      "database": "db",
+      "host": "database",
+      "dialect": "mysql",
+      "operatorsAliases": false
+    },
+    "production": {
+      "username": "maksim",
+      "password": "pass",
+      "database": "db",
+      "host": "database",
+      
+      "dialect": "mysql",
+      "operatorsAliases": false
+    }
+  }
