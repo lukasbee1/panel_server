@@ -7,8 +7,6 @@ const LayoutModel = require("./models/Layout");
 const FloorModel = require("./models/Floor");
 const SectionModel = require("./models/Section");
 
-// const SocketModel = require('../models/Socket');
-
 const sequelize = new Sequelize("db", "dev", "root", {
     host: "localhost",
     dialect: "mysql",
@@ -26,64 +24,15 @@ const Layout = LayoutModel(sequelize, Sequelize);
 const Floor = FloorModel(sequelize, Sequelize);
 const Section = SectionModel(sequelize, Sequelize);
 
-// const UserRoom = sequelize.define('UserRoom', {});
-
-// User.belongsToMany(Room, { through: UserRoom });
-// Room.belongsToMany(User, { through: UserRoom });
-
-// User.hasMany(Object, {
-//     foreignKey: {
-//         name: "assigned_by",
-//         allowNull: false,
-//     },
-// });
-// User.hasMany(Flat, {
-//     foreignKey: {
-//         name: "assigned_by",
-//         allowNull: false,
-//     },
-// });
-// User.hasMany(Floor, {
-//     foreignKey: {
-//         name: "assigned_by",
-//         allowNull: false,
-//     },
-// });
-// User.hasMany(Building, {
-//     foreignKey: {
-//         name: "assigned_by",
-//         allowNull: false,
-//     },
-// });
-// User.hasMany(Layout, {
-//     foreignKey: {
-//         name: "assigned_by",
-//         allowNull: false,
-//     },
-// });
-// User.hasMany(Object);
-// Object.belongsTo(User, {
-//     foreignKey: {
-//         allowNull: false
-//     },
-// });
-// Message.belongsTo(User, {
-//     as: "sender",
-//     foreignKey: "userId",
-// });
-
 sequelize
     .query("SET FOREIGN_KEY_CHECKS = 0")
     .then(() =>
         sequelize.sync({
-            force: true,
+            force: false,
         })
     )
     .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 1"))
     .then(() => {
-        // Room.findOrCreate({
-        //     where: { name: "common", avatar: "img/group.png" },
-        // })
         User.findOrCreate({
             where: {
                 id: 0,
@@ -101,27 +50,14 @@ sequelize
                 id: 1,
                 access_id: "0, 1, 2, 12, 112, 43, 54, 33",
                 assigned_by: 0,
-
+                name: "Променад",
+                type: "Жилой комплекс",
+                address: "Есенина",
+                sales_address: "Есенина 9"
             },
         });
-        Object.findOrCreate({
-            where: {
-                id: 2,
-                access_id: "2, 0, 12, 112, 43, 54, 33",
-                assigned_by: 0,
-            },
-        });
-        Object.findOrCreate({
-            where: {
-                id: 3,
-                access_id: "2, 0",
-                assigned_by: 0,
-            },
-        });
+       
     })
-    // .then(room => UserRoom.create({ userId: 1, roomId: room.id }))
-    // .then(() => Message.create({ userId: 1, tweet: 'messadfadsfadfadf', roomId: 1 }))
-    // .then(() => Message.create({ userId: 1, tweet: 'adsfdasfdsfds', roomId: 1 }))
     .then(
         () => {
             console.log("Database synchronised.");

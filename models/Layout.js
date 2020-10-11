@@ -5,10 +5,10 @@ module.exports = (sequelize, type) => sequelize.define('layout', {
       primaryKey: true,
       allowNull: false,
     },
+    name: type.STRING,
     access_id: type.STRING, // ids who had access to model
     assigned_by: type.INTEGER,
     object_id: type.INTEGER,
-    name: type.INTEGER,
     square: type.INTEGER,
     image: type.STRING,
     place_number: type.INTEGER,

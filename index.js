@@ -20,7 +20,6 @@ server.listen(8080, () => {
     console.log("Server started on 8080");
 });
 
-// app.post("/login", postLogin);
 app.get('/inviteUser', () =>{
 
 })
@@ -28,10 +27,10 @@ app.post('/login', login)
 
 
 
-app.delete('/deleteAnything/:type/:userId/:objectId', deleteAnything)
-app.get('/getAnything/:type/:userId/:objectId?', getAnything)
-app.put('/updateAnything/:type/:userId/:objectId', updateAnything)
-app.post('/createAnything/:type/:userId/:objectId?', createAnything)
+app.delete('/delete/:type/:userId/:objectId', deleteAnything)
+app.get('/get/:type/:userId/:objectId?', getAnything)
+app.put('/update/:type/:userId/:objectId', updateAnything)
+app.post('/create/:type/:userId/:objectId?', createAnything)
 
 
 // http://g2pc1.bu.edu/~qzpeng/manual/MySQL%20Commands.htm

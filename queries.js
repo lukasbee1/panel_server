@@ -120,7 +120,10 @@ const deleteAnything = (req, res) => {
 const getAnything = (req, res) => {
     // const { id } = req.body;
     const { type, objectId = null, userId } = req.params;
-
+    let { object_id } = req.query;
+    console.log(object_id)
+    object_id = +object_id
+    // console.log(req)
     return models[type]
         .findAll({
             where: {
@@ -151,10 +154,12 @@ const getAnything = (req, res) => {
                               id: objectId,
                           }
                         : null,
+                    // object_id ? object_id : null,
                 ],
             },
         })
         .then((data) => {
+            console.log(data)
             const resp = data.map((obj) => {
                 delete obj.dataValues.assigned_by;
                 delete obj.dataValues.access_id;
@@ -165,6 +170,7 @@ const getAnything = (req, res) => {
             res.send(resp);
         })
         .catch((error) => {
+            console.log("catsh")
             console.log(
                 `There has been a problem with your fetch operation: ${error.message}`
             );
@@ -174,7 +180,7 @@ const getAnything = (req, res) => {
 const createAnything = (req, res) => {
     const { name, assigned_by } = req.body;
 
-    const { type, objectId, userId } = req.params;
+    const { type, userId, objectId } = req.params;
     if (objectId) {
         models[type]
             .findOne({
@@ -247,6 +253,7 @@ const updateAnything = (req, res) => {
         return res.send({ error: "Required field is empty!" });
     }
     const object = req.body;
+    object.id = +objectId;
     return models[type]
         .findOne({
             where: {
@@ -275,7 +282,10 @@ const updateAnything = (req, res) => {
             },
         })
         .then((obj) => {
+            console.log(obj);
+            console.log(object);
             models[type].upsert(object);
+            return object;
         })
         .then((object) => {
             res.send(object);
