@@ -120,10 +120,8 @@ const deleteAnything = (req, res) => {
 const getAnything = (req, res) => {
     // const { id } = req.body;
     const { type, objectId = null, userId } = req.params;
-    let { object_id } = req.query;
-    console.log(object_id)
-    object_id = +object_id
-    // console.log(req)
+    let { object_id, building_id, section_id, floor_id } = req.query;
+    object_id = +object_id;
     return models[type]
         .findAll({
             where: {
@@ -149,17 +147,37 @@ const getAnything = (req, res) => {
                               ],
                           }
                         : null,
+                    object_id
+                        ? {
+                              object_id: object_id,
+                          }
+                        : null,
+                    building_id
+                        ? {
+                              building_id: building_id,
+                          }
+                        : null,
+                    ,
+                    section_id
+                        ? {
+                              section_id: section_id,
+                          }
+                        : null,
+                    ,
+                    floor_id
+                        ? {
+                              floor_id: floor_id,
+                          }
+                        : null,
                     objectId
                         ? {
                               id: objectId,
                           }
                         : null,
-                    // object_id ? object_id : null,
                 ],
             },
         })
         .then((data) => {
-            console.log(data)
             const resp = data.map((obj) => {
                 delete obj.dataValues.assigned_by;
                 delete obj.dataValues.access_id;
@@ -170,7 +188,7 @@ const getAnything = (req, res) => {
             res.send(resp);
         })
         .catch((error) => {
-            console.log("catsh")
+            console.log("catch");
             console.log(
                 `There has been a problem with your fetch operation: ${error.message}`
             );
@@ -232,12 +250,71 @@ const createAnything = (req, res) => {
         return res.send({ error: "Required field is empty!" });
     }
     const object = req.body;
+
     object.access_id = `0, ${userId}, ${assigned_by}`;
     return models[type]
         .create(object)
         .then((object) => {
             res.send(object);
+            console.log(req.body);
+            if (type === "building") {
+                if (object.with_sections) {
+                    console.log("here");
+                    let sections = [];
+                    for (let i = 0; i < object.sections_count; i++) {
+                        let section = {
+                            name: "Секция №" + (i + 1),
+                            assigned_by: userId,
+                            building_id: object.id,
+                            object_id: object.object_id,
+                        };
+                        sections.push(section);
+                    }
+                    console.log("truing to create sections");
+                    console.log(sections);
+                    return Section.bulkCreate(sections);
+                } else return null;
+            }
         })
+        .then((sections) => {
+            if (sections) {
+                let floors = [];
+                for (let i = 0; i < sections.length; i++) {
+                    for (let j = 0; j < object.floors_count; j++) {
+                        let floor = {};
+                        floor.name = "Этаж №" + (j + 1);
+                        floor.assigned_by = userId;
+                        floor.object_id = object.object_id;
+                        floor.building_id = sections[i].dataValues.building_id;
+                        floor.section_id = sections[i].dataValues.id;
+                        floor.floor_number = j + 1;
+                        floors.push(floor);
+                    }
+                }
+                console.log("trying to create floors");
+                console.log(floors);
+                return Floor.bulkCreate(floors);
+            } else return null;
+        })
+        .then((flatsObj) => {
+            let flats = [];
+            for (let i = 0; i < object.sections_count; i++) {
+                for (let j = 0; j < object.floors_count; j++) {
+                    let flat = {};
+                    flat.name = "Квартира №" + (j + 1) * (i + 1);
+                    flat.assigned_by = userId;
+                    flat.object_id = object.object_id;
+                    flat.building_id = flatsObj[i].dataValues.building_id;
+                    flat.section_id = flatsObj[i].dataValues.id;
+                    flat.floor_number = j + 1;
+                    flat.flat_number = object.first_flat_number + i * (j + 1);
+                    flats.push(flat);
+                }
+            }
+            console.log(flats);
+            return Flat.bulkCreate(flats);
+        })
+
         .catch((error) => {
             console.log(
                 `There has been a problem with your fetch operation: ${error.message}`
@@ -282,8 +359,6 @@ const updateAnything = (req, res) => {
             },
         })
         .then((obj) => {
-            console.log(obj);
-            console.log(object);
             models[type].upsert(object);
             return object;
         })

@@ -6,6 +6,7 @@ module.exports = (sequelize, type) =>
             primaryKey: true,
             allowNull: false,
         },
+        name: type.STRING,
         access_id: type.STRING, // ids who had access to model
         assigned_by: type.INTEGER,
         object_id: type.INTEGER,

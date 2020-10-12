@@ -6,9 +6,9 @@ module.exports = (sequelize, type) => sequelize.define('section', {
       primaryKey: true,
       allowNull: false,
     },
+    name: type.STRING,
     access_id: type.STRING, // ids who had access to model
     building_id: type.INTEGER,
-    floors_id: type.STRING,
     object_id: type.INTEGER,
     place_number: type.INTEGER,
   });
