@@ -267,6 +267,7 @@ const createAnything = (req, res) => {
                             assigned_by: userId,
                             building_id: object.id,
                             object_id: object.object_id,
+                            access_id:  `0, ${userId}, ${assigned_by}`
                         };
                         sections.push(section);
                     }
@@ -284,6 +285,7 @@ const createAnything = (req, res) => {
                         let floor = {};
                         floor.name = "Этаж №" + (j + 1);
                         floor.assigned_by = userId;
+                        floor.access_id =  `0, ${userId}, ${assigned_by}`
                         floor.object_id = object.object_id;
                         floor.building_id = sections[i].dataValues.building_id;
                         floor.section_id = sections[i].dataValues.id;
@@ -303,6 +305,7 @@ const createAnything = (req, res) => {
                     let flat = {};
                     flat.name = "Квартира №" + (j + 1) * (i + 1);
                     flat.assigned_by = userId;
+                    flat.access_id =  `0, ${userId}, ${assigned_by}`
                     flat.object_id = object.object_id;
                     flat.building_id = flatsObj[i].dataValues.building_id;
                     flat.section_id = flatsObj[i].dataValues.id;
