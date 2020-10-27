@@ -12,7 +12,7 @@ const {
     Floor,
     FloorLayout,
     FlatLayout,
-    IntegrationConfig
+    IntegrationConfig,
 } = require("./sequelize");
 const { Sequelize } = require("sequelize");
 const { saveImage } = require("./Utils/saveImage");
@@ -245,8 +245,7 @@ const createAnything = (req, res) => {
             })
             .then((obj) => {
                 console.log(obj);
-                return models[type].create(obj)
-
+                return models[type].create(obj);
             })
             .then((object) => {
                 console.log(object);
@@ -451,19 +450,8 @@ const updateAnything = (req, res) => {
 
 const uploadPhoto = (req, res) => {
     const { type, objectId, userId, name, square } = req.params;
-    // const { name, square, data } = req.query;
-    // const { name, square, data } = req.params;
-    console.log(req);
-    // console.log(type);
-    // console.log(objectId);
-    console.log(name, square);
-// console.log(req.body);
-// console.log(req.body.name);
-// console.log(req.body.square);
-console.log("!!!!!!");
     const object = {};
 
-    console.log(type);
     const date = Date.now();
     object.assigned_by = userId;
     object.object_id = objectId;
@@ -471,30 +459,61 @@ console.log("!!!!!!");
     object.name = name;
     object.square = square;
     object.image =
-        "http://localhost:8080/public/" + userId + date + objectId + type + ".jpg";
+        "http://localhost:8080/public/" +
+        userId +
+        date +
+        objectId +
+        type +
+        ".jpg";
     return models[type]
-        .create(object)
-        .then((object) => {
-            // console.log(object);
-            // res.send(object);
-            return object;
-        })
-        .then((object) => {
+        .upsert(object)
+        .then((bool) => {
             // console.log(object);
             var path_temp = req.files.file.path;
             var filename = userId + date + objectId + type + ".jpg";
             saveImage(path_temp, filename);
 
-            res.send(object);
-            return object;
+            // res.send(object);
+            return bool;
         })
-        .catch((err) => {
-            console.log("err: ", err);
-            res.send("err: ", err);
+        .then((bool) => {
+            return models[type].findOne({
+                where: {
+                    [Op.and]: [
+                        {
+                            [Op.or]: [
+                                {
+                                    access_id: {
+                                        [Op.like]: `%, ${userId}`,
+                                    },
+                                },
+                                {
+                                    access_id: {
+                                        [Op.like]: `${userId},%`,
+                                    },
+                                },
+                                {
+                                    access_id: {
+                                        [Op.like]: `%${userId},%`,
+                                    },
+                                },
+                            ],
+                        },
+                        { id: objectId },
+                    ],
+                },
+            });
+        })
+        .then((obji) => {
+            console.log(obji);
+            res.send(obji.dataValues);
+        })
+        .catch((error) => {
+            console.log(
+                `There has been a problem with your fetch operation: ${error.message}`
+            );
+            throw error;
         });
-    // res.end('upload');
-
-    // next();
 };
 
 // needs to updert object in what we add field with path image

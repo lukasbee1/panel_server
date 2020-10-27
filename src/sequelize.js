@@ -51,8 +51,8 @@ sequelize
         IntegrationConfig.findOrCreate({
             where: {
                 id: 0,
-                token: "qwerqwer",
                 objects_id: "1",
+                token: "qwerqwer",
                 email: "foks",
                 created_by: 0,
             },
