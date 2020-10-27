@@ -13,7 +13,6 @@ module.exports = (sequelize, type) => sequelize.define('object', {
     name: type.STRING,
     address: type.STRING,
     currency: type.STRING,
-    language: type.STRING,
     sales_address: type.STRING,
     description: type.STRING, 
     place_number: type.INTEGER,

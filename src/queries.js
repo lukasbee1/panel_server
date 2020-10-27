@@ -12,6 +12,7 @@ const {
     Floor,
     FloorLayout,
     FlatLayout,
+    IntegrationConfig
 } = require("./sequelize");
 const { Sequelize } = require("sequelize");
 const { saveImage } = require("./Utils/saveImage");

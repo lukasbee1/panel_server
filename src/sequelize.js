@@ -7,6 +7,7 @@ const FloorLayoutModel = require("./models/FloorLayout");
 const FlatLayoutModel = require("./models/FlatLayout");
 const FloorModel = require("./models/Floor");
 const SectionModel = require("./models/Section");
+const IntegrationConfigModel = require("./models/IntegrationConfig");
 
 const sequelize = new Sequelize("db", "dev", "root", {
     host: "localhost",
@@ -25,6 +26,7 @@ const FloorLayout = FloorLayoutModel(sequelize, Sequelize);
 const FlatLayout = FlatLayoutModel(sequelize, Sequelize);
 const Floor = FloorModel(sequelize, Sequelize);
 const Section = SectionModel(sequelize, Sequelize);
+const IntegrationConfig = IntegrationConfigModel(sequelize, Sequelize);
 
 sequelize
     .query("SET FOREIGN_KEY_CHECKS = 0")
@@ -44,6 +46,15 @@ sequelize
                 role: "super_admin",
                 email: "foks0605@gmail.com",
                 register_token: null,
+            },
+        });
+        IntegrationConfig.findOrCreate({
+            where: {
+                id: 0,
+                token: "qwerqwer",
+                objects_id: "1",
+                email: "foks",
+                created_by: 0,
             },
         });
         Object.findOrCreate({
@@ -76,4 +87,5 @@ module.exports = {
     FlatLayout,
     Section,
     Building,
+    IntegrationConfig,
 };
