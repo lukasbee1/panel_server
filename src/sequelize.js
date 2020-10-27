@@ -3,7 +3,8 @@ const ObjectModel = require("./models/Object");
 const UserModel = require("./models/User");
 const FlatModel = require("./models/Flat");
 const BuildingModel = require("./models/Building");
-const LayoutModel = require("./models/Layout");
+const FloorLayoutModel = require("./models/FloorLayout");
+const FlatLayoutModel = require("./models/FlatLayout");
 const FloorModel = require("./models/Floor");
 const SectionModel = require("./models/Section");
 
@@ -20,7 +21,8 @@ const User = UserModel(sequelize, Sequelize);
 const Object = ObjectModel(sequelize, Sequelize);
 const Flat = FlatModel(sequelize, Sequelize);
 const Building = BuildingModel(sequelize, Sequelize);
-const Layout = LayoutModel(sequelize, Sequelize);
+const FloorLayout = FloorLayoutModel(sequelize, Sequelize);
+const FlatLayout = FlatLayoutModel(sequelize, Sequelize);
 const Floor = FloorModel(sequelize, Sequelize);
 const Section = SectionModel(sequelize, Sequelize);
 
@@ -28,7 +30,7 @@ sequelize
     .query("SET FOREIGN_KEY_CHECKS = 0")
     .then(() =>
         sequelize.sync({
-            force: false,
+            force: true,
         })
     )
     .then(() => sequelize.query("SET FOREIGN_KEY_CHECKS = 1"))
@@ -70,7 +72,8 @@ module.exports = {
     Object,
     Flat,
     Floor,
-    Layout,
+    FloorLayout,
+    FlatLayout,
     Section,
     Building,
 };

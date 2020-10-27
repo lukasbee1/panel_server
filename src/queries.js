@@ -10,11 +10,9 @@ const {
     Flat,
     Building,
     Floor,
-    Layout,
-    JSONdata,
+    FloorLayout,
+    FlatLayout,
 } = require("./sequelize");
-const { b64EncodeUnicode, b64DecodeUnicode } = require("./Utils/encode");
-// fs = require("fs-extra");
 const { Sequelize } = require("sequelize");
 const { saveImage } = require("./Utils/saveImage");
 
@@ -30,10 +28,11 @@ const models = {
     user: User,
     object: Object,
     section: Section,
-    flat: Flat,
     building: Building,
+    flat: Flat,
     floor: Floor,
-    layout: Layout,
+    floor_layout: FloorLayout,
+    flat_layout: FlatLayout,
 };
 // const createUser = (req, res) => {
 //     const token = b64EncodeUnicode(Date.now());
@@ -131,6 +130,7 @@ const getAnything = (req, res) => {
     const { type, objectId = null, userId } = req.params;
     let { object_id, building_id, section_id, floor_id } = req.query;
     object_id = +object_id;
+    console.log(type);
     return models[type]
         .findAll({
             where: {
@@ -207,7 +207,7 @@ const getAnything = (req, res) => {
 const createAnything = (req, res) => {
     const { name, assigned_by } = req.body;
 
-    const { type, userId, objectId } = req.params;
+    const { type, userId, objectId, data } = req.params;
     if (objectId) {
         models[type]
             .findOne({
@@ -242,8 +242,13 @@ const createAnything = (req, res) => {
                 delete obj.dataValues.id;
                 return obj.dataValues;
             })
-            .then((obj) => models[type].create(obj))
+            .then((obj) => {
+                console.log(obj);
+                return models[type].create(obj)
+
+            })
             .then((object) => {
+                console.log(object);
                 res.send(object);
             })
             .catch((error) => {
@@ -279,8 +284,6 @@ const createAnything = (req, res) => {
                         };
                         sections.push(section);
                     }
-                    console.log("truing to create sections");
-                    console.log(sections);
                     return Section.bulkCreate(sections);
                 } else return null;
             }
@@ -302,7 +305,6 @@ const createAnything = (req, res) => {
                         floors.push(floor);
                     }
                 }
-                console.log("trying to create floors");
                 return Floor.bulkCreate(floors);
             } else return null;
         })
@@ -447,12 +449,20 @@ const updateAnything = (req, res) => {
 };
 
 const uploadPhoto = (req, res) => {
-    const { type, objectId, userId } = req.params;
-    const { name, square } = req.query;
-    console.log(req.files);
-
+    const { type, objectId, userId, name, square } = req.params;
+    // const { name, square, data } = req.query;
+    // const { name, square, data } = req.params;
+    console.log(req);
+    // console.log(type);
+    // console.log(objectId);
+    console.log(name, square);
+// console.log(req.body);
+// console.log(req.body.name);
+// console.log(req.body.square);
+console.log("!!!!!!");
     const object = {};
 
+    console.log(type);
     const date = Date.now();
     object.assigned_by = userId;
     object.object_id = objectId;
@@ -460,18 +470,18 @@ const uploadPhoto = (req, res) => {
     object.name = name;
     object.square = square;
     object.image =
-        "http://localhost:8080/public/" + userId + date + objectId + ".jpg";
+        "http://localhost:8080/public/" + userId + date + objectId + type + ".jpg";
     return models[type]
         .create(object)
         .then((object) => {
-            console.log(object);
+            // console.log(object);
             // res.send(object);
             return object;
         })
         .then((object) => {
             // console.log(object);
             var path_temp = req.files.file.path;
-            var filename = userId + date + objectId + ".jpg";
+            var filename = userId + date + objectId + type + ".jpg";
             saveImage(path_temp, filename);
 
             res.send(object);

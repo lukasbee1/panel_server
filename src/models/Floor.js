@@ -14,6 +14,7 @@ module.exports = (sequelize, type) =>
         section_id: type.INTEGER,
         floor_number: type.INTEGER,
         floor_layout_image: type.STRING,
+        layout_id: type.INTEGER,
         place_number: type.INTEGER,
         flats_json: type.TEXT("long"),
         interactive_image_flats: type.STRING,
